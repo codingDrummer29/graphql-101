@@ -1,17 +1,18 @@
-import {buildSchema} from 'graphql'
+import { buildSchema } from "graphql";
 
 const schema = buildSchema(`
+
     type Course {
         id: ID
         courseName: String
-        category: String
+        cataory: String
         price: Int
         language: String
         email: String
         stack: Stack
         teachingAssists: [TeachingAssist]
     }
-
+    
     type TeachingAssist {
         firstName: String
         lastName: String
@@ -25,13 +26,13 @@ const schema = buildSchema(`
     }
 
     type Query {
-        getCourse(id: ID): Course
+        getCourse(id: ID):  Course
     }
 
-    input CourseInput{
+    input CourseInput {
         id: ID
         courseName: String!
-        category: String
+        cataory: String
         price: Int!
         language: String
         email: String
@@ -39,16 +40,16 @@ const schema = buildSchema(`
         teachingAssists: [TeachingAssistInput]!
     }
 
-    input TeachingAssistInput{
+    input TeachingAssistInput {
         firstName: String
         lastName: String
         experience: Int
     }
 
     type Mutation {
-        createCourse(input: CourseInput): Course
+        createCourse(input: CourseInput):  Course
     }
-`)
 
+`);
 
 export default schema;
