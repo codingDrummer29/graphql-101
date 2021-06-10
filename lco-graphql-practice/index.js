@@ -1,22 +1,9 @@
-import express from 'express'
-import resolvers from './resolvers'
-import schema from './schema'
+import express from "express";
 
-import {graphqlHTTP} from 'express-graphql'
-
-const app = express()
+const app = express();
 
 app.get("/", (req, res) => {
-    res.send("Up and running with graphql crash course")
-})
+  res.send("Up and running with GraphQL crash course - practie version");
+});
 
-const root = resolvers;
-
-app.use('/graphql', graphqlHTTP({
-    schema: schema,
-    rootValue: root,
-    graphiql: true
-}))
-
-
-app.listen(8082, () => console.log("Running at 8082"))
+app.listen(8082, () => console.log("Running at port 8082"));
