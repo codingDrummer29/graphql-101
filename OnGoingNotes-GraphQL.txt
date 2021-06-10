@@ -1,0 +1,346 @@
+################################ GRAPHQL STARTS ################################
+
+
+->  GraphQl Defination:
+    - Pick Specific data
+
+    SOURCE: https://graphql.org/
+
+    GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data. 
+    GraphQL provides a complete and understandable description of the data in your API, gives clients the power 
+    to ask for exactly what they need and nothing more, makes it easier to evolve APIs over time, and 
+    enables powerful developer tools.
+
+    REVIEW: GraphQL over Rest APIs, The problem it's trying to solve
+
+    SOURCE: https://www.howtographql.com/basics/1-graphql-is-the-better-rest/
+
+    In regular Rest APIs, we get the response based on request with get(request)/post(request) or any other format. 
+    What it does is sends a request to a server, gets the natural response from there where all the response is 
+    dumpped along with status(404-error, 201-success) & many others. From there it get's the data.
+    Then we again request the required fields for our work and fetch perticular datas.
+    EX: 
+    If we want to get a api req. from a school team api for a perticular player's data about his name, height,
+    weight;
+        1st we have to req. to the api server to aquire a response. if that's a success then 
+        2nd we'll fetch the perticular fields of data from that source 
+    Now for a service/app that has 400k-500k users they can handle this double request queries, no issue. but
+    if the no. multiplies by 89-90mil, then this reach will cause an immense load on the server.
+
+    Here comes the GraphQL. It actually can dig a little deep inside the API with it's queries so that this problem
+    can be dealt with
+
+->  Understanding GraphQL with an exercise:
+
+    NOTE: 
+        The process can be done in many ways, butwe will be using Node npm, Express for this exercise.
+        It's build as a creash course so only basics func. will be discussed here not the gargons.
+    
+    Objective:
+        #   We want to create a new entry
+        #   We want to read the entry
+        #   We'll talk about SCHEMA and RESOLVERS
+    
+    To learn more about all the theory on GraphQL head over to the official docs.
+    SOURCE: https://graphql.org/learn/
+
+    Get the base file structure from the following link
+    SOURCE: INCLUDE:
+
+    #   open the folder and go through the fields
+    #   INSTALL: run command inside vs code terminal> npm install 
+    #   run the project> npm start, the port is localhost:8082
+    
+    #   INSTALL: npm install express graphql express-graphql nanoid
+
+    #   basic setup for the index.js:
+        @   import express from "express";
+        
+        @   declaring a basic express app
+                const app = express();
+        
+        @   declaring the app's route with get method of req-response along with a response message
+                app.get("/", (req, res) => { 
+                    res.send("Up and running with GraphQL crash course - practice version");
+                });
+        
+        @   running the app inside custom port as default express feature
+                app.listen(8082, () => console.log("Running at port 8082"));
+
+    REVIEW:
+    As bare minimum basic, there are three parts to the GreaphQL, 1) Scheme, 2) Resolvers & 3) Config
+
+    1)  Schema:
+        
+        schema is a place/file where we define what type of datas we will be using in our data store &
+        also define the input method. it also delas with the generation of queries to be sent to the 
+        Resolver
+
+        #   create a file at root, schema.js
+        #   import bare-minimum func. buildSchema from the graphql
+                import { buildSchema } from "graphql";
+        #   declare the schema 1st
+                const schema = buildSchema(``);
+        #   export the schema as default
+                export default schema;
+        
+        NOTE:
+        There ar multiple types of schemas like type, enum input and etc. we will try to showcase them here 
+        as well.
+
+        #   type schema
+            now we can specify multiple custom data types here with the support of usual data-types
+                type Course {
+                    id: ID
+                    courseName: String
+                    cataory: String
+                    price: Int
+                    language: String
+                    email: String
+                    stack: Stack
+                    teachingAssists: [TeachingAssist]
+                }
+            @   here we define Course type data properties with default data types like Int, String etc.
+            @   we can also define array, like teachingAssists: []
+                here for this perticular case we have used an array of custom made data type of TeachingAssist
+                which we have defined later
+        
+        #   enum schema
+            we can also use enums here. the stack of type Stack follows enum schema
+                enum Stack {
+                    WEB
+                    MOBILE
+                    OTHER
+                }
+        INCLUDE: @ enum.png @
+        
+        #   now we define the type schema Query
+                type Query {
+                    getCourse(id: ID):  Course
+                }
+            @   getCourse() is a getter-setter kind of method that expects an id of type ID & returns a 
+                Course data type
+            @   the queries are dealt with Resolvers
+            @   Our resolver, yet to create/modify, will be responsible to resolve this query
+
+        #    input schema
+            now as our goals, we will have to store datas too. that is done by input type schema
+                input CourseInput {
+                    id: ID
+                    courseName: String!
+                    cataory: String
+                    price: Int!
+                    language: String
+                    email: String
+                    stack: Stack
+                    teachingAssists: [TeachingAssistInput]!
+                }
+            @   just as normal type declaration, input schema is a replical of that with some changes
+            @   we put ! sign to specify mandatory fields
+            @   just as customized array datatype declaratiion, we need to rename the & specify those
+                custom type inputs too. like here TeachingAssistInput which is defined later on
+
+        #   Mutation type schema
+                type Mutation {
+                    createCourse(input: CourseInput):   Course
+                }
+            @   Mutation is a key word, not a var; so don't change that
+            @   createCourse() is a getter-setter kind of method that sets the data to the datastore that's
+                been created.
+                it espects an input of type CourseInput & returns a Course data type
+
+    2)  Resolvers:
+
+        Resolvers contain methods to get processes done, queries by schema handled, requests from 
+        setter-type functions provided.
+
+        #   create file root> resolvers.js
+        #   import the nanoid
+                import { nanoid } from "nanoid";
+        #   now we will define a class
+                class Course{
+                    constructor( ... ){
+                        ...
+                    }
+                }
+            as a class, Course expects to have a constructor
+        
+        #   as parameter the constructor needs 2 parameter
+                constructor(
+                    id,
+                    { courseName, category, price, language, email, stack, teachingAssists }
+                ) {
+                    ...
+                }
+            @   an id which it will get from the schema-defination 
+            @   an object of fields defined as Course type-schema
+        
+        #   now we have to set the object fields with resolved datas
+                constructor(
+                    id,
+                    { courseName, ..., teachingAssists }
+                ){
+                    this.id = id;
+                    this.courseName = courseName;
+                    ...
+                    this.teachingAssists = teachingAssists;
+                }
+        
+        #   now for this exercise we are creating a const var, to hold the key-value-pair data which in gen.
+            is sent to the database.
+                const courseholder = {};   
+            this obj. will hold the key-alue-pair datas in place for the resolver to do it's job
+        
+        #   now we create the resolvers func.
+                const resolvers = {
+                    getCourse: ({ id }) => {
+                        return new Course(id, courseholder[id]);
+                    },
+                    createCourse: ({ input }) => {
+                        let id = nanoid();
+                        courseholder[id] = input;
+                        return new Course(id, input);
+                    },
+                };
+            @   resolvers holds the schemas to be processeds mentioned inside the schema.js
+            @   exactly copy/paste the names of the process schemas
+            @   for getCourse, it expects as id. based on that it is returning a new Courrse-class provided
+                with an id, and the courseholder with an id as well.
+            @   for createCourse, it expects an input. ased on that it creates the data in the data store with
+                an unique id from nanoid, details of the course using courseholder provided with an id, & then
+                it returns/creates a new Course-class with the unique id and the recieved input.
+
+        #   export the resolvers as default
+                export default resolvers;
+
+
+    Moving back to the index.js & bring everything together
+    #   import the created JS files
+            import resolvers from "./resolvers";
+            import schemas from "./schema";
+    
+    #   import graphqlHTTP
+            import { graphqlHTTP } from "express-graphql";
+    
+    #   we will now use lthe app.use() to implement the graphqlHTTP protocol
+            app.use("/graphql", graphqlHTTP({
+                    schema: schema,
+                    rootValue: root,
+                    graphiql: true,
+                })
+            );
+        @   we are saying on the baseurl/graphql route, under the governence of graphqlHTTP follow those
+            schemas
+        @   then we need to have an root value which we are going to define next.
+        @   then we enable the graphiql flag to true to open the online docs section
+        INCLUDE: @ 2.png @
+        @   remember to use that app.use() here, or errors will be thrown.
+    
+    #   define the root var
+        @   1st run this the app with this:
+                const root = { lco: () => console.log("LearnCodeOnline.in") };
+        @   then use this:
+                const root = resolvers;
+    
+This will successfully run the app. Now let's understand the GraphQL working.
+
+->  Working with GraphQL:
+
+    based upon the build of our app or in gen GraphQL web-based workspace we can perform whole lot of tasks.
+    EX:
+    #   performing Mutation:
+        run this command,
+            mutation{
+                createCourse(input: {
+                    courseName: "JS bootcamp"
+                }){
+                    id,
+                    courseName
+                }
+            }
+
+        @   mutation will trigger the schema.js> type Mutation{...}
+        @   from there the following function will be triggered to be resolved
+                createCourse(input: CourseInput):  Course
+            we discussed what this code means.
+        @   then because of that resolvers.js> resolvers will be evoked to create a new Course data-set
+        @   inside resolvers.js> resolvers, we have defined a return also. that requiers id and a Course
+            name.
+            thats why at the buttom we wrote the {id, courseName}
+        @   this also means in the graphql web work-front we have to provide the input datas that we specified
+            as mandatory in schema.js with ! sign.
+            so running the above code we will give us errors errors
+        INCLUDE: @ error.png @
+
+        now we'll provide atleast the mandatory fields.
+        run this command,
+            mutation{
+                createCourse(input: {
+                    courseName: "JS bootcamp"
+                    price: 199
+                    stack: MOBILE
+                    teachingAssists: [
+                        {
+                            firstName: "anubhab"
+                            lastName: "mukherjee"
+                            experience: 1
+                        },
+                        {
+                            lastName: "choudhary"
+                            experience: 4
+                        }
+                    ]
+                }){
+                    id,
+                    courseName
+                }
+            }
+        
+        now this gives us a successfull result
+            {
+                "data": {
+                    "createCourse": {
+                        "id": "FdoWuy5rZy2QXESyk0GFl",
+                        "courseName": "JS bootcamp"
+                    }
+                }
+            }
+        INCLUDE: @ success.png @
+
+    #   performing Query:
+        @   copy an id
+        @   run a query
+                query{
+                    getCourse(id: "FdoWuy5rZy2QXESyk0GFl"){
+                        id
+                        teachingAssists{
+                            experience
+                        }
+                    }
+                }
+        @   see the result
+            the result that came to us is in a much clean way
+                {
+                    "data": {
+                        "getCourse": {
+                            "id": "FdoWuy5rZy2QXESyk0GFl",
+                            "teachingAssists": [
+                                {
+                                    "experience": 1
+                                },
+                                {
+                                    "experience": 4
+                                }
+                            ]
+                        }
+                    }
+                }
+            INCLUDE: @ query.png @
+
+It is obvious for a small service not to take this much of a long route just to perform some filtered
+single request to the API/server.
+But taking ths approach for an large scale app/ service can be fructatious as server trafficing will be
+drastically reduced. 
+
+
+################################  GRAPHQL ENDS  ################################
