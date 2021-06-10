@@ -45,7 +45,9 @@
     SOURCE: https://graphql.org/learn/
 
     Get the base file structure from the following link
-    SOURCE: INCLUDE:
+        SOURCE: https://github.com/codingDrummer29/graphql-101
+        Download all files as .zip, base file is the lco-graphql one 
+        lco-graphql-practice file contains the completed project version 
 
     #   open the folder and go through the fields
     #   INSTALL: run command inside vs code terminal> npm install 
@@ -112,7 +114,6 @@
                     MOBILE
                     OTHER
                 }
-        INCLUDE: @ enum.png @
         
         #   now we define the type schema Query
                 type Query {
@@ -233,7 +234,6 @@
             schemas
         @   then we need to have an root value which we are going to define next.
         @   then we enable the graphiql flag to true to open the online docs section
-        INCLUDE: @ 2.png @
         @   remember to use that app.use() here, or errors will be thrown.
     
     #   define the root var
@@ -270,7 +270,6 @@ This will successfully run the app. Now let's understand the GraphQL working.
         @   this also means in the graphql web work-front we have to provide the input datas that we specified
             as mandatory in schema.js with ! sign.
             so running the above code we will give us errors errors
-        INCLUDE: @ error.png @
 
         now we'll provide atleast the mandatory fields.
         run this command,
@@ -305,7 +304,6 @@ This will successfully run the app. Now let's understand the GraphQL working.
                     }
                 }
             }
-        INCLUDE: @ success.png @
 
     #   performing Query:
         @   copy an id
@@ -335,7 +333,6 @@ This will successfully run the app. Now let's understand the GraphQL working.
                         }
                     }
                 }
-            INCLUDE: @ query.png @
 
 It is obvious for a small service not to take this much of a long route just to perform some filtered
 single request to the API/server.
